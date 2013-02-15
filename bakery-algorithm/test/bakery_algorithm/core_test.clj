@@ -32,13 +32,15 @@
     ))
 
 (deftest free-server-test
-  (testing "Adding and removing in parallel doesn't collide"
-           (reset-free-servers!)
-           (pmap (fn [n] (now-free n)) (range 20))
-           (is (= 20 (num-free-servers)))
-           (is (= (range 20) 
-                  (sort (pmap (fn [_] (next-server))))))
-           (is (= 0 (num-free-servers)))))
+  (testing 
+    "Adding and removing in parallel doesn't collide"
+    (let [numServers 100]
+      (reset-free-servers!)
+      (doall (pmap (fn [n] (now-free n)) (range numServers)))
+      (is (= numServers (num-free-servers)))
+      (is (= (range numServers) 
+             (sort (pmap (fn [_] (next-server)) (range numServers)))))
+      (is (= 0 (num-free-servers))))))
 
 (ticket-machine-test)
 (free-server-test)
