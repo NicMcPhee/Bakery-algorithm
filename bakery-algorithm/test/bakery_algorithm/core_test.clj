@@ -31,4 +31,13 @@
            (sort (pmap (fn [_] (next-ticket)) (range 20)))))
     ))
 
+(deftest free-server-test
+  (testing "Adding and removing in parallel doesn't collide"
+           (reset-free-servers!)
+           (pmap (fn [n] (now-free n)) (range 20))
+           (is (= 20 (num-free-servers)))
+           (is (= (range 20) 
+                  (sort (pmap (fn [_] (next-server))))))
+           (is (= 0 (num-free-servers)))))
+
 (ticket-machine-test)
