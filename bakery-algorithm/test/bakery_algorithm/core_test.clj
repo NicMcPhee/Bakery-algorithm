@@ -41,3 +41,4 @@
            (is (= 0 (num-free-servers)))))
 
 (ticket-machine-test)
+(free-server-test)
