@@ -42,5 +42,18 @@
              (sort (pmap (fn [_] (next-server)) (range numServers)))))
       (is (= 0 (num-free-servers))))))
 
+(deftest make-server-test
+  (testing
+    "Creating a server causes it to be added to the free server list"
+    (reset-free-servers!)
+    (is (= 0 (count @free-servers)))
+    (make-server 5)
+    (is (= 1 (count @free-servers)))
+    (is (= 5 (:id (peek @free-servers))))
+    (make-server 7)
+    (is (= 2 (count @free-servers)))
+    (is (= 7 (:id (nth @free-servers 1))))))
+
 (ticket-machine-test)
 (free-server-test)
+(make-server-test)
