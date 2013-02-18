@@ -54,6 +54,20 @@
     (is (= 2 (count @free-servers)))
     (is (= 7 (:id (nth @free-servers 1))))))
 
+(deftest make-customer-test
+  (testing
+    "Creating customers with zero wait causes them to take a number right away"
+    (reset-free-servers!)
+    (reset! ticket-machine -1)
+    (let [c (make-customer 5)]
+      (is (= 0 (:ticket-number c))))
+    (is (= 0 @ticket-machine))
+    (let [c (make-customer 5)]
+      (is (= 1 (:ticket-number c))))
+    (is (= 1 @ticket-machine))
+    ))
+
 (ticket-machine-test)
 (free-server-test)
 (make-server-test)
+(make-customer-test)

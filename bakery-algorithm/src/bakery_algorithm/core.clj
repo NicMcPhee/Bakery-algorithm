@@ -29,6 +29,10 @@
       (alter free-servers pop)
       ns)))
 
+;; Make the now-serving sign
+
+(def now-serving (atom 0))
+
 ;; Make our customers and serves
 
 (defn make-server [id]
@@ -37,7 +41,21 @@
     (now-free server)
     server))
 
-(defn make-customer {})
+(defn now-serving-updated [customer now-serving-number]
+  nil)
+
+(defn make-customer 
+  ([id] (make-customer id 0))
+  ([id delay-before-entering]
+    (let [c (atom {:id id})]
+      (add-watch now-serving 
+                 c 
+                 (fn [customer ns old-value new-value] 
+                   (now-serving-updated customer @new-value)))
+      (future
+        (Thread/sleep delay-before-entering)
+        (swap! c assoc :ticket-number (next-ticket)))
+      )))
 
 (defn make-people [numCustomers numServers]
   (map make-server (range numServers))
