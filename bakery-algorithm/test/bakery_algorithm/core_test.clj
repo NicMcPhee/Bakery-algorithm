@@ -60,14 +60,25 @@
     (reset-free-servers!)
     (reset! ticket-machine -1)
     (let [c (make-customer 5)]
-      (is (= 0 (:ticket-number c))))
+      (is (= 0 (:ticket-number @c))))
     (is (= 0 @ticket-machine))
-    (let [c (make-customer 5)]
-      (is (= 1 (:ticket-number c))))
+    (let [d (make-customer 7)]
+      (is (= 1 (:ticket-number @d))))
     (is (= 1 @ticket-machine))
     ))
+
+(deftest make-people-test
+  (testing
+    "Creating a set of servers and customers generates the correct number of individuals"
+    (reset-free-servers!)
+    (reset! ticket-machine -1)
+    (let [people (make-people 50 10)]
+      (is (= 60 (count people)))
+      (is (= 10 (count @free-servers)))
+      (is (= 49 @ticket-machine)))))
 
 (ticket-machine-test)
 (free-server-test)
 (make-server-test)
 (make-customer-test)
+(make-people-test)

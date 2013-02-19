@@ -54,9 +54,11 @@
                    (now-serving-updated customer @new-value)))
       (future
         (Thread/sleep delay-before-entering)
-        (swap! c assoc :ticket-number (next-ticket)))
+        (swap! c assoc :ticket-number (next-ticket))
+        )
+      c
       )))
 
 (defn make-people [numCustomers numServers]
-  (map make-server (range numServers))
-  (map make-customer (range numServers (+ numCustomers numServers))))
+  (concat (map make-server (range numServers))
+          (map make-customer (range numServers (+ numCustomers numServers)))))
