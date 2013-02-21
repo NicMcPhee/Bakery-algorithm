@@ -25,6 +25,7 @@
 
 (defn now-free [server]
   (dosync
+    (swap! server assoc :free true)
     (alter free-servers conj server)))
 
 (defn next-server []
@@ -42,8 +43,9 @@
 ;; Make our customers and serves
 
 (defn make-server [id]
-  (let [server {:id id}]
+  (let [server (atom {:id id})]
     ; Every new server is free to help a customer
+    (log-reference server console)
     (now-free server)
     server))
 
@@ -76,5 +78,7 @@
   ; I found it easier to have the IDs for servers be negative and the
   ; IDs of customers be non-negative (0 or greater), so I map inc and
   ; then negation across the range for the server IDs.
-  (concat (map (comp make-server - inc) (range numServers))
-          (map make-customer (range numCustomers))))
+  (concat (doseq [server-id (range numServers)] 
+            (make-server (- (inc server-id))))
+          (doseq [customer-id (range numCustomers)]
+            (make-customer customer-id))))
